@@ -1,14 +1,35 @@
+body {
+    height: 95vh;
+}
+
 .row {
+    height: 100%;
     display: flex;
+    align-items: center;
   }
 .col {
     flex: 50%;
-    padding-left: 5%;
+    padding: 2.5%;
 }
 
-.change-types {
+@media (max-width: 700px) {
+    .row {
+        flex-direction: column;
+    }
+}
+
+.actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
+}
+
+.activeAction {
+    color: white;
+    background: black;
+}
+
+legend {
+    margin: auto;
 }
 
 .hidden {

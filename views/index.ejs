@@ -22,19 +22,21 @@
             <legend>Data</legend>
             <div id="data-editor"></div>
         </fieldset>
-        <fieldset class="change-types">
-            <legend>Interaction</legend>
-            <label>Create</label> <input type="radio" name="changeType" value="create" />
-            <label>Read</label> <input type="radio" checked name="changeType" value="read" />
-            <label>Update</label> <input type="radio" name="changeType" value="update" />
-            <label>Delaytay</label> <input type="radio" name="changeType" value="delaytay" />
+        <fieldset class="actions">
+            <legend>Actions</legend>
+
+            <button id="createButton">Switch to Create</button>
+            <button id="readButton" class="activeAction">Read</button>
+            <button id="updateButton">Switch to Update</button>
+            <button id="delaytayButton">Switch to Delaytay</button>
         </fieldset>
-        <button id="interactButton">Interact</button>
     </fieldset>
 </section>
 <section class = 'col'>
-    <h1>Results</h1>
-    <pre><code id="results"></code></pre>
+    <fieldset>
+        <legend>Results</legend>
+        <div id="results"></div>
+    </fieldset>
 </section>
 </section>
 <script type="text/javascript" src='main.js'></script>

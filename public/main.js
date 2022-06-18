@@ -19,21 +19,31 @@ const EDITORS = {
     results: new JSONEditor(document.getElementById('results'), { mode: 'preview' })
 }
 
-document.querySelector('.change-types').addEventListener('change', e => {
-    const changeType = e.target.value;
-    const showingEditors = CHANGE_TYPE_EDITORS[changeType];
+document.querySelector('.actions').addEventListener('click', ({ target: button }) => {
+    if (button.tagName !== 'BUTTON') return;
+
+    const previous = document.querySelector('.activeAction')
+    if (previous === button) return makeChange();
+
+    previous.textContent = 'Switch to ' + previous.textContent;
+    previous.classList.remove('activeAction');
+
+    const editorName = button.textContent.split(' ').at(-1)
+    const editorType = editorName.toLowerCase();
+    const showingEditors = CHANGE_TYPE_EDITORS[editorType];
     for (const editorType of ['data', 'filter']){
         EDITORS[editorType].container.parentElement.classList.toggle('hidden', !showingEditors.includes(editorType));
     }
+
+    button.textContent = editorName;
+    button.classList.add('activeAction');
 });
 
-document.querySelector('#interactButton').addEventListener('click', makeChange)
-
-
 async function makeChange(){
-    const changeType = document.querySelector('input[name="changeType"]:checked').value;
+    const changeType = document.querySelector('.activeAction').textContent.toLowerCase();
     const method = CHANGE_TYPE_TO_METHOD[changeType];
     try{
+        document.querySelector('.actions').disabled = true;
         const payload = {};
         for (const editorType of CHANGE_TYPE_EDITORS[changeType]){
             payload[editorType] = EDITORS[editorType].get()
@@ -49,9 +59,12 @@ async function makeChange(){
 
         const response = await fetch(url, options)
         const data = await response.json();
+        await new Promise(resolve => setTimeout(resolve, 1000));
         EDITORS.results.set(data);
     }catch(err){
         console.error(err)
+    } finally {
+        document.querySelector('.actions').disabled = false;
     }
 }
 
