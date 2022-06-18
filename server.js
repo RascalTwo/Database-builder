@@ -1,10 +1,12 @@
 const express = require('express')
+const { Db } = require('mongodb')
 const app = express()
 const MongoClient = require('mongodb').MongoClient
 const PORT = 8000
 require('dotenv').config()
 
 
+/** @type {Db} */
 let db,
     dbConnectionStr = process.env.DB_STRING,
     dbName = 'star-trek-api'
@@ -25,26 +27,35 @@ app.use(express.json())
 //    });
 
 app.get('/',(request, response)=>{
-    db.collection('alien-info').find().toArray()
-    .then(data => {
-        let nameList = data.map(a => a.speciesName)
-        console.log(nameList)
-        response.render('index.ejs', { info: nameList })
-    })
-    .catch(error => console.error(error))
+    response.render('index.ejs')
 })
 
-app.post('/api', (req,res) => {
-    console.log('post heard')
-    db.collection('alien-info').insertOne(
-        req.body
-    )
-    .then(result => {
-        console.log(result)
-        res.redirect('/')
-    })
-    .catch(error => console.error(error))
-})
+app.get('/interact', (req, res) => {
+    let filter = JSON.parse(req.query.filter)
+    if (!Object.keys(filter).length) filter = undefined;
+    console.log(filter)
+    db.collection('alien-info').find(filter).toArray()
+        .then(data => res.send(data))
+        .catch(error => console.trace(error))
+});
+
+app.post('/interact', (req, res) => {
+    db.collection('alien-info').insertOne(req.body.data)
+        .then(data => res.send(data))
+        .catch(error => console.trace(error))
+});
+
+app.put('/interact', (req, res) => {
+    db.collection('alien-info').updateMany(req.body.filter, { $set: req.body.data })
+        .then(data => res.send(data))
+        .catch(error => console.trace(error))
+});
+
+app.delete('/interact', (req, res) => {
+    db.collection('alien-info').deleteMany(req.body.filter)
+        .then(data => res.send(data))
+        .catch(error => console.trace(error))
+});
 
 //DOES NOT FUNCTION YET
 app.post('/massinsert', (req,res) => {
@@ -56,39 +67,6 @@ app.post('/massinsert', (req,res) => {
     .then(result => {
         console.log(result)
         res.redirect('/')
-    })
-    .catch(error => console.error(error))
-})
-
-app.put('/updateEntry', (req,res) => {
-    console.log(req.body)
-    Object.keys(req.body).forEach(key => {
-        if (req.body[key] === null || req.body[key] === undefined || req.body[key] === '') {
-          delete req.body[key];
-        }
-      });
-    console.log(req.body)
-    db.collection('alien-info').findOneAndUpdate(
-        {name: req.body.name},
-        {
-            $set:  req.body  
-        },
-        // {
-        //     upsert: true
-        // }
-    )
-    .then(result => {
-        console.log(result)
-        res.json('Success')
-    })
-    .catch(error => console.error(error))
-})
-
-app.delete('/deleteEntry', (request, response) => {
-    db.collection('alien-info').deleteOne({name: request.body.name})
-    .then(result => {
-        console.log('Entry Deleted')
-        response.json('Entry Deleted')
     })
     .catch(error => console.error(error))
 })

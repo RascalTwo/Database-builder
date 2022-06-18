@@ -6,41 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.9.0/jsoneditor.min.js" integrity="sha512-WuimD+3eJ3qkskeMQiQZesaYjwyBiTN2Xg2tI60IDp5jx402/u8lLZAqCgAei92NInz0Jn+xYqJKYCbxic4hIA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.9.0/jsoneditor.css" integrity="sha512-NGELF6nbKCOKdzzfnY/DOKS5W25MVV5iZb92NK3fIwnKpL1OEUXibeepvzxAEgQtWgXGOzllOUpCybmenKDeRQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 <section class = 'row'>
 <section class = 'col'>
-    <h2>Input API Data Here</h2>
-    <form action="/api" method="POST">
-        <input type="text" placeholder="name" name="name">
-        <input type="text" placeholder="speciesName" name="speciesName">
-        <textarea rows="5" cols="40" type="text" placeholder="features" name="features"></textarea>
-        <input type="text" placeholder="homeworld" name="homeworld">
-        <input type="text" placeholder="image" name="image">
-        <textarea rows="5" cols="40" type="text" placeholder="interestingFact" name="interestingFact"></textarea>
-        <input type="text" placeholder="notableExamples" name="notableExamples">
-        <button type="submit">SUBMIT NEW</button>
-        <button type="button" id="updateButton">UDPATE EXISTING</button>
-    </form>
+    <fieldset>
+        <legend>Manage Database</legend>
+        <fieldset class="hidden">
+            <legend>Filter</legend>
+            <div id="filter-editor"></div>
+        </fieldset>
+        <fieldset>
+            <legend>Data</legend>
+            <div id="data-editor"></div>
+        </fieldset>
+        <fieldset class="change-types">
+            <legend>Interaction</legend>
+            <label>Create</label> <input type="radio" name="changeType" value="create" />
+            <label>Read</label> <input type="radio" checked name="changeType" value="read" />
+            <label>Update</label> <input type="radio" name="changeType" value="update" />
+            <label>Delaytay</label> <input type="radio" name="changeType" value="delaytay" />
+        </fieldset>
+        <button id="interactButton">Interact</button>
+    </fieldset>
 </section>
 <section class = 'col'>
-    <h2>Delete API Data Here</h2>
-    <input input type="text" placeholder="name to delete" name="deleteInput" id = "deleteInput"><button id="deleteButton">DELETE</button>
-
-    <h2>Current Aliens</h2>
-    <ul class="aliens">
-    <% for(let i=0; i < info.length; i++) {%>
-        <li class="alien">
-            <span><%= info[i] %></span>
-        </li>
-    <% } %>
-    </ul>
-
-    <h2>Insert JSON Here</h2>
-    <form action="/massinsert" method="POST">
-    <textarea rows="20" cols="40" type="text" placeholder="insert JSON, comma delimited between objects" name="insertMany"></textarea>
-    <button type="submit">LOAD JSON</button>
-    </form>
+    <h1>Results</h1>
+    <pre><code id="results"></code></pre>
 </section>
 </section>
 <script type="text/javascript" src='main.js'></script>
