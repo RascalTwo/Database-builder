@@ -13,9 +13,27 @@ const CHANGE_TYPE_EDITORS = {
     delaytay: ['filter'],
 }
 
+const pasteMode = document.querySelector('.paste-mode input')
+
+function handleJavaScriptPasting(name, text){
+    if (!pasteMode.checked) return;
+
+    try {
+        JSON.parse(text);
+    } catch (e) {
+        try {
+            const pastedData = eval(text);
+            if (!pastedData) return;
+            const pos = EDITORS[name].getTextSelection();
+            EDITORS[name].set(pastedData);
+            EDITORS[name].setTextSelection(pos);
+        } catch (e) { }
+    }
+}
+
 const EDITORS = {
-    filter: new JSONEditor(document.getElementById('filter-editor'), { mode: 'code' }),
-    data: new JSONEditor(document.getElementById('data-editor'), { mode: 'code' }),
+    filter: new JSONEditor(document.getElementById('filter-editor'), { mode: 'code', onChangeText: handleJavaScriptPasting.bind(null, 'filter') }),
+data: new JSONEditor(document.getElementById('data-editor'), { mode: 'code',  onChangeText: handleJavaScriptPasting.bind(null, 'data') }),
     results: new JSONEditor(document.getElementById('results'), { mode: 'preview' })
 }
 
@@ -113,28 +131,4 @@ async function makeChange(){
     } finally {
         setUIState(false);
     }
-}
-
-async function updateEntry(){
-    try{
-        const response = await fetch('updateEntry', {
-        method: 'put',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            name: document.getElementsByName("name")[0].value,
-            speciesName: document.getElementsByName("speciesName")[0].value,
-            features: document.getElementsByName("features")[0].value,
-            homeworld: document.getElementsByName("homeworld")[0].value,
-            image: document.getElementsByName("image")[0].value,
-            interestingFact: document.getElementsByName("interestingFact")[0].value,
-            notableExamples: document.getElementsByName("notableExamples")[0].value
-        })
-    })
-    const data = await response.json()
-    console.log(data)
-    location.reload()
-
-}catch(err){
-    console.log(err)
-}
 }
