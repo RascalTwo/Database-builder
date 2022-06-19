@@ -19,7 +19,16 @@ const EDITORS = {
     results: new JSONEditor(document.getElementById('results'), { mode: 'preview' })
 }
 
-document.querySelector('.actions').addEventListener('click', ({ target: button }) => {
+const getCredentials = () => {
+    const credentials = {};
+    for (const id of ['connectionUri', 'databaseName', 'collectionName']){
+        credentials[id] = document.getElementById(id).value;
+        if (!credentials[id]) throw new Error(`${id} is required`);
+    }
+    return credentials;
+}
+
+document.querySelector('#actions').addEventListener('click', ({ target: button }) => {
     if (button.tagName !== 'BUTTON') return;
 
     const previous = document.querySelector('.activeAction')
@@ -40,7 +49,7 @@ document.querySelector('.actions').addEventListener('click', ({ target: button }
 });
 
 function setUIState(disabled){
-    document.querySelector('.actions').disabled = disabled;
+    document.querySelectorAll('fieldset').forEach(fieldset => fieldset.disabled = disabled);
     for (const editorType of ['data', 'filter']){
         EDITORS[editorType].setMode(disabled ? 'preview' : 'code');
     }
@@ -60,7 +69,10 @@ async function makeChange(){
         let url = new URL('/interact', window.location.origin)
         const options = {
             method,
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json',
+                'x-mongodb-authorization': JSON.stringify(getCredentials())
+            },
         }
         if (method !== CHANGE_TYPE_TO_METHOD.read) options.body = JSON.stringify(payload)
         else for (const key in payload) url.searchParams.set(key, JSON.stringify(payload[key]));
@@ -70,7 +82,8 @@ async function makeChange(){
         await new Promise(resolve => setTimeout(resolve, 1000));
         EDITORS.results.set(data);
     }catch(err){
-        console.error(err)
+        console.error(err);
+        alert(err?.message || err);
     } finally {
         setUIState(false);
     }

@@ -3,20 +3,8 @@ const { Db } = require('mongodb')
 const app = express()
 const MongoClient = require('mongodb').MongoClient
 const PORT = 8000
-require('dotenv').config()
 
 
-/** @type {Db} */
-let db,
-    dbConnectionStr = process.env.DB_STRING,
-    dbName = 'star-trek-api'
-
-MongoClient.connect(dbConnectionStr, { useUnifiedTopology: true })
-    .then(client => {
-        console.log(`Connected to ${dbName} Database`)
-        db = client.db(dbName)
-    })
-    
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }))
@@ -30,29 +18,40 @@ app.get('/',(request, response)=>{
     response.render('index.ejs')
 })
 
+const connectToCollection = ({ connectionUri, databaseName, collectionName }) => {
+    return MongoClient.connect(connectionUri, { useUnifiedTopology: true })
+        .then(client => client.db(databaseName).collection(collectionName))
+}
+
+const serializeMongoDBError = error => ({ message: error.toString(), error})
+
 app.get('/interact', (req, res) => {
     let filter = JSON.parse(req.query.filter)
     if (!Object.keys(filter).length) filter = undefined;
-    console.log(filter)
-    db.collection('alien-info').find(filter).toArray()
+
+    return connectToCollection(JSON.parse(req.get('x-mongodb-authorization')))
+        .then(collection => collection.find(filter).toArray(), serializeMongoDBError)
         .then(data => res.send(data))
         .catch(error => console.trace(error))
 });
 
 app.post('/interact', (req, res) => {
-    db.collection('alien-info').insertOne(req.body.data)
+    connectToCollection(JSON.parse(req.get('x-mongodb-authorization')))
+        .then(collection => collection.insertOne(req.body.data), serializeMongoDBError)
         .then(data => res.send(data))
         .catch(error => console.trace(error))
 });
 
 app.put('/interact', (req, res) => {
-    db.collection('alien-info').updateMany(req.body.filter, { $set: req.body.data })
+    connectToCollection(JSON.parse(req.get('x-mongodb-authorization')))
+        .then(collection => collection.updateMany(req.body.filter, { $set: req.body.data }), serializeMongoDBError)
         .then(data => res.send(data))
         .catch(error => console.trace(error))
 });
 
 app.delete('/interact', (req, res) => {
-    db.collection('alien-info').deleteMany(req.body.filter)
+    connectToCollection(JSON.parse(req.get('x-mongodb-authorization')))
+        .then(collection => collection.deleteMany(req.body.filter), serializeMongoDBError)
         .then(data => res.send(data))
         .catch(error => console.trace(error))
 });

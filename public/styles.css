@@ -3,7 +3,6 @@ body {
 }
 
 .row {
-    height: 100%;
     display: flex;
     align-items: center;
   }
@@ -18,9 +17,11 @@ body {
     }
 }
 
-.actions {
+.grid-fieldset {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    width: max-content;
+    margin: auto;
 }
 
 .activeAction {

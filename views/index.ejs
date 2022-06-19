@@ -1,44 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="/styles.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.9.0/jsoneditor.min.js" integrity="sha512-WuimD+3eJ3qkskeMQiQZesaYjwyBiTN2Xg2tI60IDp5jx402/u8lLZAqCgAei92NInz0Jn+xYqJKYCbxic4hIA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.9.0/jsoneditor.css" integrity="sha512-NGELF6nbKCOKdzzfnY/DOKS5W25MVV5iZb92NK3fIwnKpL1OEUXibeepvzxAEgQtWgXGOzllOUpCybmenKDeRQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-<body>
-<section class = 'row'>
-<section class = 'col'>
-    <fieldset>
-        <legend>Manage Database</legend>
-        <fieldset class="hidden">
-            <legend>Filter</legend>
-            <div id="filter-editor"></div>
-        </fieldset>
-        <fieldset>
-            <legend>Data</legend>
-            <div id="data-editor"></div>
-        </fieldset>
-        <fieldset class="actions">
-            <legend>Actions</legend>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="/styles.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.9.0/jsoneditor.min.js" integrity="sha512-WuimD+3eJ3qkskeMQiQZesaYjwyBiTN2Xg2tI60IDp5jx402/u8lLZAqCgAei92NInz0Jn+xYqJKYCbxic4hIA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.9.0/jsoneditor.css" integrity="sha512-NGELF6nbKCOKdzzfnY/DOKS5W25MVV5iZb92NK3fIwnKpL1OEUXibeepvzxAEgQtWgXGOzllOUpCybmenKDeRQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    </head>
+    <body>
+        <section class = 'row'>
+            <section class = 'col'>
+                <fieldset class="grid-fieldset">
+                    <legend>Database</legend>
+                    <label for="connectionUri">Connection URI</label>
+                    <input id="connectionUri" value="mongodb+srv://<username>:<password>@cluster.abcdef.ghi.mongodb.net/?retryWrites=true&w=majority"/>
 
-            <button id="createButton">Switch to Create</button>
-            <button id="readButton" class="activeAction">Read</button>
-            <button id="updateButton">Switch to Update</button>
-            <button id="delaytayButton">Switch to Delaytay</button>
-        </fieldset>
-    </fieldset>
-</section>
-<section class = 'col'>
-    <fieldset>
-        <legend>Results</legend>
-        <div id="results"></div>
-    </fieldset>
-</section>
-</section>
-<script type="text/javascript" src='main.js'></script>
-</body>
+                    <label for="databaseName">Database Name</label>
+                    <input id="databaseName" value="star-trek-api"/>
+
+                    <label for="collectionName">Collection Name</label>
+                    <input id="collectionName" value="alien-info"/>
+                </fieldset>
+            </section>
+        </section>
+        <section class = 'row'>
+            <section class = 'col'>
+                <fieldset>
+                    <legend>Manage Database</legend>
+                    <fieldset class="hidden">
+                        <legend>Filter</legend>
+                        <div id="filter-editor"></div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Data</legend>
+                        <div id="data-editor"></div>
+                    </fieldset>
+                    <fieldset class="grid-fieldset" id="actions">
+                        <legend>Actions</legend>
+
+                        <button id="createButton">Switch to Create</button>
+                        <button id="readButton" class="activeAction">Read</button>
+                        <button id="updateButton">Switch to Update</button>
+                        <button id="delaytayButton">Switch to Delaytay</button>
+                    </fieldset>
+                </fieldset>
+            </section>
+            <section class = 'col'>
+                <fieldset>
+                    <legend>Results</legend>
+                    <div id="results"></div>
+                </fieldset>
+            </section>
+        </section>
+        <script type="text/javascript" src='main.js'></script>
+    </body>
 </html>
