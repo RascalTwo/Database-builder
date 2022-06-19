@@ -37,7 +37,7 @@ app.get('/interact', (req, res) => {
 
 app.post('/interact', (req, res) => {
     connectToCollection(JSON.parse(req.get('x-mongodb-authorization')))
-        .then(collection => collection.insertOne(req.body.data), serializeMongoDBError)
+        .then(collection => collection[Array.isArray(req.body.data) ? 'insertMany' : 'insertOne'](req.body.data), serializeMongoDBError)
         .then(data => res.send(data))
         .catch(error => console.trace(error))
 });
