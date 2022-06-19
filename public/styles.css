@@ -36,3 +36,8 @@ legend {
 .hidden {
     display: none;
 }
+
+#resultsAge {
+    text-align: center;
+    display: block;
+}

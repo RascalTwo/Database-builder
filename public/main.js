@@ -48,11 +48,36 @@ document.querySelector('#actions').addEventListener('click', ({ target: button }
     button.classList.add('activeAction');
 });
 
+const resultsAge = document.getElementById('resultsAge');
+
 function setUIState(disabled){
     document.querySelectorAll('fieldset').forEach(fieldset => fieldset.disabled = disabled);
     for (const editorType of ['data', 'filter']){
         EDITORS[editorType].setMode(disabled ? 'preview' : 'code');
     }
+    resultsAge.classList.toggle('hidden', disabled);
+}
+
+function secondsToHMS(totalSeconds) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = Math.floor(totalSeconds % 60);
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+setInterval(() => {
+    if (resultsAge.classList.contains('hidden')) return;
+    const now = new Date()
+
+    const age = now.getTime() - resultsAge.dataset.when;
+    resultsAge.children[0].textContent = secondsToHMS(age / 1000);
+    resultsAge.datetime = now.toISOString();
+    resultsAge.title = resultsAge.alt = `Results received at ${now.toLocaleString()}`;
+}, 1000);
+
+const setResults = (data) => {
+    EDITORS.results.set(data);
+    resultsAge.dataset.when = Date.now();
 }
 
 async function makeChange(){
@@ -60,6 +85,7 @@ async function makeChange(){
     const method = CHANGE_TYPE_TO_METHOD[changeType];
     try{
         setUIState(true);
+        setResults('Loading...');
 
         const payload = {};
         for (const editorType of CHANGE_TYPE_EDITORS[changeType]){
@@ -80,7 +106,7 @@ async function makeChange(){
         const response = await fetch(url, options)
         const data = await response.json();
         await new Promise(resolve => setTimeout(resolve, 1000));
-        EDITORS.results.set(data);
+        setResults(data);
     }catch(err){
         console.error(err);
         alert(err?.message || err);
