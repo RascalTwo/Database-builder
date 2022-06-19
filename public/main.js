@@ -39,11 +39,19 @@ document.querySelector('.actions').addEventListener('click', ({ target: button }
     button.classList.add('activeAction');
 });
 
+function setUIState(disabled){
+    document.querySelector('.actions').disabled = disabled;
+    for (const editorType of ['data', 'filter']){
+        EDITORS[editorType].setMode(disabled ? 'preview' : 'code');
+    }
+}
+
 async function makeChange(){
     const changeType = document.querySelector('.activeAction').textContent.toLowerCase();
     const method = CHANGE_TYPE_TO_METHOD[changeType];
     try{
-        document.querySelector('.actions').disabled = true;
+        setUIState(true);
+
         const payload = {};
         for (const editorType of CHANGE_TYPE_EDITORS[changeType]){
             payload[editorType] = EDITORS[editorType].get()
@@ -64,7 +72,7 @@ async function makeChange(){
     }catch(err){
         console.error(err)
     } finally {
-        document.querySelector('.actions').disabled = false;
+        setUIState(false);
     }
 }
 
